@@ -1,8 +1,10 @@
 from math import sqrt, floor, ceil
-from typing import Iterable, List, Tuple
+from typing import List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 from torch import Tensor
+from tester import Tester
+from trainer import Trainer
 
 
 def denormalize(img):
@@ -54,19 +56,52 @@ def show_misclassified_images(
     predictions: List[int],
     labels: List[int],
     classes: List[str],
+    label: str = "",
 ):
     assert len(images) == len(predictions) == len(labels)
 
-    fig = plt.figure(figsize=(20, 10))
+    fig = plt.figure(figsize=(5, 12))
+    fig.suptitle(label)
+
     for i in range(len(images)):
-        sub = fig.add_subplot(len(images) // 5, 5, i + 1)
+        plt.subplot(len(images) // 2, 2, i + 1)
+        plt.tight_layout()
         image = images[i]
         npimg = denormalize(image.cpu().numpy().squeeze())
-        plt.imshow(npimg, cmap="gray")
         predicted = classes[predictions[i]]
         correct = classes[labels[i]]
-        sub.set_title(
-            "Correct class: {}\nPredicted class: {}".format(correct, predicted)
-        )
-    plt.tight_layout()
-    plt.show()
+        plt.imshow(npimg, cmap="gray")
+        plt.title("Correct: {}\nPredicted: {}".format(correct, predicted))
+        plt.xticks([])
+        plt.yticks([])
+
+
+def plot_data(data_list: List[List[int | float]], titles: List[str]):
+    assert len(data_list) == len(
+        titles
+    ), "length of datalist should be equal to length of title list"
+
+    rows, cols = get_rows_cols(len(data_list))
+
+    fig, axs = plt.subplots(rows, cols, figsize=(15, 10))
+
+    for i in range(rows):
+        for j in range(cols):
+            idx = i * cols + j
+
+            if idx >= len(data_list):
+                break
+
+            ax = axs[i, j] if len(axs.shape) > 1 else axs[max(i, j)]
+
+            ax.plot(data_list[idx])  # type: ignore
+            ax.set_title(titles[idx])
+
+
+def collect_results(trainer: Trainer, tester: Tester):
+    return {
+        "train_losses": trainer.losses,
+        "train_accuracies": trainer.accuracies,
+        "test_losses": tester.losses,
+        "test_accuracies": tester.accuracies,
+    }

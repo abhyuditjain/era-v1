@@ -5,8 +5,8 @@ from torch import Tensor
 
 class Tester:
     def __init__(self, model, test_loader, criterion, device) -> None:
-        self.test_losses = []
-        self.test_accuracies = []
+        self.losses = []
+        self.accuracies = []
         self.model = model.to(device)
         self.test_loader = test_loader
         self.criterion = criterion
@@ -32,7 +32,7 @@ class Tester:
                 correct += pred.eq(targets.view_as(pred)).sum().item()
 
         test_loss /= len(self.test_loader.dataset)
-        self.test_losses.append(test_loss)
+        self.losses.append(test_loss)
 
         print(
             "Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)".format(
@@ -43,7 +43,7 @@ class Tester:
             )
         )
 
-        self.test_accuracies.append(100.0 * correct / len(self.test_loader.dataset))
+        self.accuracies.append(100.0 * correct / len(self.test_loader.dataset))
 
         return 100.0 * correct / len(self.test_loader.dataset), test_loss
 

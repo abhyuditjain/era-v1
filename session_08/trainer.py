@@ -4,9 +4,9 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 class Trainer:
     def __init__(self, model, train_loader, optimizer, criterion, device) -> None:
-        self.train_losses = []
-        self.train_accuracies = []
-        self.epoch_train_accuracies = []
+        self.losses = []
+        self.accuracies = []
+        self.epoch_accuracies = []
         self.model = model.to(device)
         self.train_loader = train_loader
         self.optimizer = optimizer
@@ -43,7 +43,7 @@ class Trainer:
                     l1 = l1 + p.abs().sum()
             loss = loss + lambda_l1 * l1
 
-            self.train_losses.append(loss.item())
+            self.losses.append(loss.item())
 
             # Backpropagation
             loss.backward()
@@ -56,10 +56,10 @@ class Trainer:
             pbar.set_description(
                 desc=f"EPOCH = {epoch} | LR = {self.optimizer.param_groups[0]['lr']} | Loss = {loss.item():3.2f} | Batch = {batch_id} | Accuracy = {100*correct/processed:0.2f}"
             )
-            self.train_accuracies.append(100 * correct / processed)
+            self.accuracies.append(100 * correct / processed)
 
         # After all the batches are done, append accuracy for epoch
-        self.epoch_train_accuracies.append(100 * correct / processed)
+        self.epoch_accuracies.append(100 * correct / processed)
 
         self.lr_history.extend(lr_trend)
         return 100 * correct / processed, train_loss / len(self.train_loader), lr_trend

@@ -42,7 +42,10 @@ class Cifar10DataLoader:
         )
 
     def get_loader(self, transforms: Optional[Callable], train=True):
-        return DataLoader(self.get_dataset(transforms, train), **self.dataloader_args)
+        return DataLoader(
+            dataset=self.get_dataset(transforms=transforms, train=train),
+            **self.dataloader_args,
+        )
 
     def get_classes(self):
         return self.classes
