@@ -168,27 +168,27 @@ class Session08Model(nn.Module):
 
         self.conv_block1 = ConvBlock(
             in_channels=3,
-            out_channels=16,
+            out_channels=24,
             num_layers=2,
             padding=1,
             norm_method=norm_method,
             add_skip=False,
         )
-        self.trans_block1 = TransBlock(in_channels=16, out_channels=24)
+        self.trans_block1 = TransBlock(in_channels=24, out_channels=16)
 
         self.conv_block2 = ConvBlock(
-            in_channels=24,
+            in_channels=16,
             out_channels=24,
             num_layers=3,
             padding=1,
             norm_method=norm_method,
             add_skip=add_skip,
         )
-        self.trans_block2 = TransBlock(in_channels=24, out_channels=32)
+        self.trans_block2 = TransBlock(in_channels=24, out_channels=16)
 
         self.conv_block3 = ConvBlock(
-            in_channels=32,
-            out_channels=32,
+            in_channels=16,
+            out_channels=24,
             num_layers=3,
             padding=1,
             norm_method=norm_method,
@@ -197,7 +197,7 @@ class Session08Model(nn.Module):
 
         self.output_block = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(in_channels=32, out_channels=10, kernel_size=(1, 1), bias=False),
+            nn.Conv2d(in_channels=24, out_channels=10, kernel_size=(1, 1), bias=False),
             nn.Flatten(),
             nn.LogSoftmax(dim=1),
         )
@@ -216,8 +216,6 @@ class Session08Model(nn.Module):
 """
 Session 7 Models
 """
-import torch.nn as nn
-import torch.nn.functional as F
 
 
 class Model_01(nn.Module):
